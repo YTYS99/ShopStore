@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import login from '../components/login.vue'
 import home from '../components/home.vue'
+import users from '../components/user/users.vue'
+import rights from '../components/rights/rights.vue'
 
 Vue.use(VueRouter)
 
@@ -10,7 +12,15 @@ const router = new VueRouter({
     // 路由重定向 打开页面时自动访问 登录界面
     { path: '/', redirect: '/login' },
     { path: '/login', component: login },
-    { path: '/home', component: home }
+    {
+      path: '/home',
+      component: home,
+      redirect: '/users', // 子组件的重定向
+      children: [
+        { path: '/users', component: users },
+        { path: '/rights', component: rights }
+      ]
+    }
   ]
 })
 

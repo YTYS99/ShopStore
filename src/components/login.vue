@@ -31,8 +31,8 @@ export default {
     return {
       // 这是登录表单的数据绑定对象
       form: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       rules: {
         // 表单验证
@@ -60,12 +60,18 @@ export default {
         this.$message.success(res.meta.msg)
         // 将 token 放入 session 中，方便后面的调用
         sessionStorage.setItem('token', res.data.token)
+        // 将 用户信息 放入 session 中
+        const userinfo = { username: res.data.username, email: res.data.email, mobile: res.data.mobile }
+        const info = JSON.stringify(userinfo)
+        sessionStorage.setItem('userinfo', info)
+        // 将首次进入时，主体内容需要显示的页面路径放到 session 中，为让其左侧 高亮
+        sessionStorage.setItem('path', '/users')
         // 页面跳转，通过组件的编程式导航跳转实现假跳转
         this.$router.push('/home')
       })
     },
+    // 重置表单
     reset () {
-      // 重置表单
       this.$refs.form.resetFields()
     }
   }
