@@ -108,7 +108,7 @@ export default {
     savePath(path) {
       const Path = '/' + path
       window.sessionStorage.setItem('path', Path)
-      this.activePath = path
+      this.activePath = Path
     }
   }
 }

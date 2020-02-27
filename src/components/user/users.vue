@@ -50,7 +50,7 @@
         layout="total, sizes, prev, pager, next, jumper" :total="userList.total">
       </el-pagination>
     </el-card>
-    <!-- 弹窗 -->
+    <!-- 修改用户信息 弹窗 -->
     <el-dialog :title="DiTitle" :visible.sync="dialogFormVisible" @close="CloseDig">
       <el-form :model="form" status-icon :rules="rules" ref="Form">
         <el-form-item label="用户名称" prop="username" label-width="120px">
@@ -76,6 +76,25 @@
       </div>
     </el-dialog>
 
+    <!-- 分配角色弹窗 -->
+    <el-dialog title="分配权限" :visible.sync="dialogVisible1" width="50%">
+      <div>
+        <p>当前用户：{{ NowUserInfo.username }} </p>
+        <p>当前角色：{{ NowUserInfo.rolename }} </p>
+        <p>
+          <!-- 选择角色 -->
+          <label> 分配新角色： </label>
+          <el-select v-model="SelectRole" placeholder="请选择新角色" clearable>
+            <el-option v-for="item in RolesList" :key="item.id" :label="item.roleName" :value="item.id"> </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="giveRole">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -93,7 +112,8 @@ export default {
       }
     }
     return {
-      userList: [],
+      userList: [], // 用户列表
+      RolesList: [], // 角色列表
       queryInfo: {
         // 获取用户信息 提交的查询信息
         query: '',
@@ -101,6 +121,7 @@ export default {
         pagesize: 10
       },
       dialogFormVisible: false, // 动态控制弹窗的显示和隐藏
+      dialogVisible1: false, // 分配角色的弹窗显示和隐藏
       form: {
         // 添加用户的信息表单
         id: '',
@@ -126,7 +147,9 @@ export default {
         ]
       },
       subFlag: true, // 决定当前弹窗是 修改 还是 添加  true -- 添加 false -- 修改
-      DiTitle: '添加用户' // 动态修改弹窗的标题
+      DiTitle: '添加用户', // 动态修改弹窗的标题
+      NowUserInfo: [], // 当前用户信息
+      SelectRole: '' // 选择的角色
     }
   },
   created() {
@@ -139,6 +162,11 @@ export default {
         params: this.queryInfo
       })
       this.userList = res.data
+    },
+    // 获取 角色 列表
+    async getRoleList() {
+      const { data: res } = await this.$http.get('roles')
+      this.RolesList = res.data
     },
     // 修改用户状态
     async ChangeStatus(userInfo) {
@@ -156,14 +184,16 @@ export default {
       // 获取用户信息
       const { data: res } = await this.$http.get(`users/${userInfo.id}`)
       this.form = res.data
-      console.log(this.form)
       this.dialogFormVisible = true // 打开弹窗
       this.subFlag = false
       this.DiTitle = '修改用户信息'
     },
     // 修改用户信息
     async edit() {
-      const { data: res } = await this.$http.put(`users/${this.form.id}`, this.form)
+      const { data: res } = await this.$http.put(
+        `users/${this.form.id}`,
+        this.form
+      )
       if (res.meta.status !== 200) {
         return this.$message.error('修改用户信息失败！')
       }
@@ -181,7 +211,27 @@ export default {
       this.$message.success('删除成功！')
       this.getUserList()
     },
-    control(id) {},
+    // 打开 分配角色 弹窗
+    control(userInfo) {
+      this.NowUserInfo.id = userInfo.id
+      this.NowUserInfo.username = userInfo.username
+      this.NowUserInfo.rolename = userInfo.role_name
+      this.getRoleList()
+      this.dialogVisible1 = true
+    },
+    // 分配角色
+    async giveRole() {
+      const { data: res } = await this.$http.put(
+        `users/${this.NowUserInfo.id}/role`,
+        { rid: this.SelectRole }
+      )
+      if (res.meta.status !== 200) {
+        return this.$message.error('分配角色失败！')
+      }
+      this.$message.error('分配角色成功！')
+      this.dialogVisible1 = false
+      this.getUserList()
+    },
     // 监听分页的显示数量 size 的事件
     handleSizeChange(NewSize) {
       this.queryInfo.pagesize = NewSize
