@@ -46,7 +46,7 @@
        </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[2, 20, 50, 100]" :page-size="queryInfo.pagesize"
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[5, 20, 50, 100]" :page-size="queryInfo.pagesize"
         layout="total, sizes, prev, pager, next, jumper" :total="userList.total">
       </el-pagination>
     </el-card>
@@ -118,7 +118,7 @@ export default {
         // 获取用户信息 提交的查询信息
         query: '',
         pagenum: 1,
-        pagesize: 10
+        pagesize: 5
       },
       dialogFormVisible: false, // 动态控制弹窗的显示和隐藏
       dialogVisible1: false, // 分配角色的弹窗显示和隐藏

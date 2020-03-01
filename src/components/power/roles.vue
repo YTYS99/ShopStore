@@ -68,7 +68,7 @@
     <!-- 分配权限弹窗 -->
     <el-dialog title="分配权限" :visible.sync="dialogVisible" width="50%">
       <!-- 树形组件 -->
-      <el-tree :data="rightsList" node-key="id" ref="treeRef" show-checkbox :default-checked-keys="rightsKeys" :props="treeProps" default-expand-all></el-tree>
+      <el-tree :data="rightsList" node-key="id" ref="treeRef" show-checkbox :default-checked-keys="rightsKeys" :props="treeProps" default-expand-all accordion></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="giveRights">确 定</el-button>
@@ -213,15 +213,18 @@ export default {
     async giveRights() {
       // 获取当前选中的节点
       // 获取当前半选中的 节点
-      const keys = [
-        ...this.$refs.treeRef.getCheckedKeys(),
-        ...this.$refs.treeRef.getHalfCheckedNodes()
-      ]
-
-      const idstr = keys.join(',')
+      const Ck = this.$refs.treeRef.getCheckedKeys()
+      const Hk = this.$refs.treeRef.getHalfCheckedNodes()
+      const hk = []
+      Hk.forEach(item => {
+        hk.push(item.id)
+      })
+      const key = Ck.concat(hk)
+      const keys = key.join(',')
+      console.log(keys)
       const { data: res } = await this.$http.post(
         `roles/${this.roleId}/rights`,
-        { rids: idstr }
+        { rids: keys }
       )
       if (res.meta.status !== 200) {
         return this.$message.error('分配权限失败！')

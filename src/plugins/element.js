@@ -6,9 +6,21 @@ import {
   MenuItemGroup, Dropdown, DropdownMenu,
   DropdownItem, Avatar, Breadcrumb, BreadcrumbItem,
   Card, Row, Col, Table, TableColumn, Switch, Pagination,
-  Tooltip, Dialog, Tag, MessageBox, Tree, Select, Option
+  Tooltip, Dialog, Tag, MessageBox, Tree, Select, Option,
+  Cascader, Alert, Tabs, TabPane, Step, Steps
 } from 'element-ui'
+// 由于 element 版本问题 导致 时间线 没有，自己下载导入
+import Timeline from './timeline/index.js'
+import TimelineItem from './timeline-item/index.js'
 
+Vue.use(Timeline)
+Vue.use(TimelineItem)
+Vue.use(Step)
+Vue.use(Steps)
+Vue.use(Tabs)
+Vue.use(TabPane)
+Vue.use(Alert)
+Vue.use(Cascader)
 Vue.use(Button)
 Vue.use(Form)
 Vue.use(FormItem)
