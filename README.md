@@ -19,6 +19,10 @@ npm run build
 ```
 npm run lint
 ```
+### API接口文件
+```
+https://github.com/YTYS99/ShopStoreAPI.git
+```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
